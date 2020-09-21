@@ -159,6 +159,17 @@ to obtain appropriate credentials: Client ID, Client Secret, API Key, or
 Username & Password. You will need to go through each provider to generate new
 credentials.
 
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/RecaptchaLogo.svg/200px-RecaptchaLogo.svg.png" width="200">
+
+- Visit <a href="https://www.google.com/recaptcha/admin" target="_blank">Google reCAPTCHA Admin Console</a>
+- Enter your application's name as the **Label**
+- Chose **reCAPTCHA v2**, **"I'm not a robot" Checkbox**
+- Enter *localhost* as the domain.  You can have other domains added in addition to *localhost*
+- Accept the terms and submit the form
+- Copy the *Site Key* and the *Secret key* into `.env`.  These keys will be accessible under Settings, reCAPTCHA keys drop down if you need them again later.
+
+<hr>
+
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1000px-Google_2015_logo.svg.png" width="200">
 
 - Visit <a href="https://cloud.google.com/console/project" target="_blank">Google Cloud Console</a>
@@ -326,6 +337,19 @@ The same goes for other providers.
 - Copy and paste *Key* into `.env` file
 
 <hr>
+<img src="https://www.freepnglogos.com/uploads/twitch-logo-image-hd-31.png" height="90">
+
+- Visit the <a href="https://dev.twitch.tv/dashboard/apps" target="_blank">Twitch developer dashboard</a>
+- If prompted, authorize the dashboard to access your twitch account
+- In the Console, click on Register Your Application
+- Enter the name of your application
+- Use OAuth Redirect URLs enter `http://localhost:8080/auth/twitch/callback`
+- Set Category to Website Integration and press the Create button
+- After the applicaiton has been created, click on the Manage button
+- Copy and paste *Client ID* into `.env`
+- If there is no Client Secret displayed, click on New Secret button and then copy and paste the *Client secret* into `.env`
+
+<hr>
 
 <img src="https://sendgrid.com/brand/sg-logo-300.png" width="200">
 
@@ -419,7 +443,6 @@ List of Packages
 | chai                            | BDD/TDD assertion library.                                              |
 | chalk                           | Terminal string styling done right.                                     |
 | cheerio                         | Scrape web pages using jQuery-style syntax.                             |
-| clockwork                       | Clockwork SMS API library.                                              |
 | compression                     | Node.js compression middleware.                                         |
 | connect-mongo                   | MongoDB session store for Express.                                      |
 | dotenv                          | Loads environment variables from .env file.                             |
@@ -462,9 +485,9 @@ List of Packages
 | passport-oauth2-refresh         | A library to refresh OAuth 2.0 access tokens using refresh tokens.      |
 | passport-snapchat               | Sign-in with Snapchat plugin.                                           |
 | passport-twitter                | Sign-in with Twitter plugin.                                            |
+| passport-twitch-new             | Sign-in with Twitch plugin.                                             |
 | paypal-rest-sdk                 | PayPal APIs library.                                                    |
 | pug                             | Template engine for Express.                                            |
-| request                         | Simplified HTTP request library.                                        |
 | sinon                           | Test spies, stubs and mocks for JavaScript.                             |
 | stripe                          | Offical Stripe API library.                                             |
 | supertest                       | HTTP assertion library.                                                 |
@@ -1284,17 +1307,17 @@ create an account with **MongoDB Atlas** and then pick one of the *4* providers 
 Again, there are plenty of other choices, and you are not limited to just the ones
 listed below.
 
-### 1-Step Deployment with Heroku
+### Deployment to Heroku
 
 <img src="https://upload.wikimedia.org/wikipedia/en/a/a9/Heroku_logo.png" width="200">
 
 - Download and install [Heroku Toolbelt](https://toolbelt.heroku.com/)
 - In a terminal, run `heroku login` and enter your Heroku credentials
 - From *your app* directory run `heroku create`
-- Run `heroku addons:create mongolab`.  This will set up the mLab add-on and configure the `MONGODB_URI` environment variable in your Heroku app for you.
-- Lastly, do `git push heroku master`.  Done!
+- Use the command `heroku config:set KEY=val` to set the different environment variables (KEY=val) for your application (i.e.  `heroku config:set BASE_URL=[heroku App Name].herokuapp.com` or `heroku config:set MONGODB_URI=mongodb://dbuser:<password>@cluster0-shard-00-00-sdf32.mongodb.net:27017,cluster0-shard-00-01-sdf32.mongodb.net:27017/<dbname>?ssl=true&retryWrites=true&w=majority` (see Hosted MongoDB Atlas below), etc.)  Make sure to set the environment variables for SENDGRID_USER, SENDGRID_PASSWORD, and any other API that you are using as well.
+- Lastly, do `git push heroku master`.
 
-**Note:** To install Heroku add-ons your account must be verified.
+Please note that you may also use the [Herko Dashboard](https://dashboard.heroku.com) to set or modify the configurations for your application.
 
 ---
 

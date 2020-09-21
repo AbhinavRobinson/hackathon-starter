@@ -7,7 +7,6 @@ const { Octokit } = require('@octokit/rest');
 const Twit = require('twit');
 const stripe = require('stripe')(process.env.STRIPE_SKEY);
 const twilio = require('twilio')(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
-const clockwork = require('clockwork')({ key: process.env.CLOCKWORK_KEY });
 const paypal = require('paypal-rest-sdk');
 const lob = require('lob')(process.env.LOB_KEY);
 const ig = require('instagram-node').instagram();
@@ -451,32 +450,35 @@ exports.postTwilio = (req, res, next) => {
 };
 
 /**
- * GET /api/clockwork
- * Clockwork SMS API example.
+ * Get /api/twitch
  */
-exports.getClockwork = (req, res) => {
-  res.render('api/clockwork', {
-    title: 'Clockwork SMS API'
-  });
-};
+exports.getTwitch = async (req, res, next) => {
+  const token = req.user.tokens.find((token) => token.kind === 'twitch');
+  const twitchID = req.user.twitch;
 
-/**
- * POST /api/clockwork
- * Send a text message using Clockwork SMS
- */
-exports.postClockwork = (req, res, next) => {
-  const message = {
-    To: req.body.telephone,
-    From: 'Hackathon',
-    Content: 'Hello from the Hackathon Starter'
-  };
-  clockwork.sendSms(message, (err, responseData) => {
-    if (err) { return next(err.errDesc); }
-    req.flash('success', { msg: `Text sent to ${responseData.responses[0].to}` });
-    res.redirect('/api/clockwork');
-  });
-};
+  const getUser = (userID) =>
+    axios.get(`https://api.twitch.tv/helix/users?id=${userID}`, { headers: { Authorization: `Bearer ${token.accessToken}` } })
+      .then(({ data }) => data)
+      .catch((err) => Promise.reject(new Error(`There was an error while getting user data ${err}`)));
+  const getFollowers = () =>
+    axios.get(`https://api.twitch.tv/helix/users/follows?to_id=${twitchID}`, { headers: { Authorization: `Bearer ${token.accessToken}` } })
+      .then(({ data }) => data)
+      .catch((err) => Promise.reject(new Error(`There was an error while getting followers ${err}`)));
 
+  try {
+    const yourTwitchUser = await getUser(twitchID);
+    const otherTwitchUser = await getUser(44322889);
+    const twitchFollowers = await getFollowers();
+    res.render('api/twitch', {
+      title: 'Twitch API',
+      yourTwitchUserData: yourTwitchUser.data[0],
+      otherTwitchUserData: otherTwitchUser.data[0],
+      twitchFollowers,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
 /**
  * GET /api/chart

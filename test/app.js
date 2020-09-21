@@ -25,6 +25,14 @@ describe('GET /signup', () => {
   });
 });
 
+describe('GET /forgot', () => {
+  it('should return 200 OK', (done) => {
+    request(app)
+      .get('/forgot')
+      .expect(200, done);
+  });
+});
+
 describe('GET /api', () => {
   it('should return 200 OK', (done) => {
     request(app)
@@ -77,14 +85,6 @@ describe('GET /api/lob', () => {
   it('should return 200 OK', (done) => {
     request(app)
       .get('/api/lob')
-      .expect(200, done);
-  });
-});
-
-describe('GET /api/clockwork', () => {
-  it('should return 200 OK', (done) => {
-    request(app)
-      .get('/api/clockwork')
       .expect(200, done);
   });
 });
